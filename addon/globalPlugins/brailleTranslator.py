@@ -1,4 +1,5 @@
 import globalPluginHandler
+import globalCommands
 from scriptHandler import script
 import ui
 import api
@@ -89,16 +90,17 @@ def brailleToText(braille):
 			if temp is not None: resultText=resultText+str(temp)
 		print("result:",resultText)
 	api.copyToClip(resultText)
+	ui.message(resultText)
 
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
+	scriptCategory = globalCommands.SCRCAT_BRAILLE
 
 	@script(
-		description=_("Announces the window class name of the current focus object"),
+		description=_("盲文转汉字"),
 		gesture="kb:NVDA+x"
 	)
-	def script_announceWindowClassName(self, gesture):
+	def script_TransBraille(self, gesture):
 		focusObj = api.getFocusObject()
 		value = focusObj.value
-		ui.message("hello")
 		brailleToText(value)

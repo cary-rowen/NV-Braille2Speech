@@ -196,8 +196,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	@script(
 		# Translators: Describes a command.
-		description=_("Toggles braille input from the PC keyboard."),
-		gesture="kb:NVDA+z"
+		description=_("开关盲文输入"),
+		gesture="kb:NVDA+0"
 	)
 	def script_toggleInput(self, gesture):
 		if self.isEnabled:
@@ -224,7 +224,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 class AddonSettingsPanel(SettingsPanel):
 
-	#title = ADDON_SUMMARY
+	title = "盲文输入"
 
 	def makeSettings(self, settingsSizer):
 		sHelper = guiHelper.BoxSizerHelper(self, sizer=settingsSizer)

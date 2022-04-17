@@ -29,7 +29,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 
 	@scriptHandler.script(
-		description=_("盲文转义开关"), 
+		description=_("开关盲文到语音转译"), 
 gesture=_("kb:NVDA+O"))
 	def script_toggle(self, gesture):
 		if not globalVars.speechDictionaryProcessing:
