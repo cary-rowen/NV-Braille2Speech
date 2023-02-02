@@ -47,3 +47,9 @@ NVDA(NonVisual Desktop Access) 由澳大利亚的非盈利性组织 NV Access �
 对于转换后的结果，可以选择使用语音直接读出，或者复制到剪贴板便于粘贴。
 
 比如： 若用户输入： “⠌⠲⠛⠕⠂” 后按下 NVDA + X 会听到 TTS 朗读“中国”，同时将“中国”这两个字复制到 Windows 系统剪贴板。
+## 第三方引用
+
+我们引用了以下第三方开元项目：
+
+* Pinyin2Hanzi: https://github.com/letiantian/Pinyin2Hanzi
+* pcKbBrl: https://github.com/nvdaes/pcKbBrl
