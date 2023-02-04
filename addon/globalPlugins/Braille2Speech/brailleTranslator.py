@@ -1,12 +1,18 @@
-import globalPluginHandler
-import globalCommands
-from scriptHandler import script
-import ui
-import api
+import json
 from .Pinyin2Hanzi import DefaultHmmParams
 from .Pinyin2Hanzi import viterbi
-from . import brailleToPinInToText
-from .Pinyin2Hanzi import simplify_pinyin as s 
+from .Pinyin2Hanzi import simplify_pinyin
+from os.path import join, dirname
+
+
+def loadDict(dictFile):
+	with open(join(dirname(__file__), dictFile),'r', encoding='UTF-8') as f:
+		dict = json.load(f)
+	return dict
+
+PinInDict = loadDict("brailleToPinIn.json")
+TextDict = loadDict("pinInToText.json")
+SingleWord = loadDict("singleWord.json")
 
 def brailleToText(braille):
 	conflictVowels=["⠸","⠩","⠣","⠜","⠑","⠡","⠭","⠹","⠊","⠬","⠾","⠫","⠳"]
@@ -19,7 +25,7 @@ def brailleToText(braille):
 			elif braille[i]=="⠓": temp="X"
 			else: temp="Q"
 		else:
-			temp=brailleToPinInToText.GlobalPlugin.getPinInDict().get(braille[i])
+			temp=PinInDict.get(braille[i])
 		pinIn.append(temp)
 	pinInList=list()
 	print("pinIn",pinIn)
@@ -42,18 +48,18 @@ def brailleToText(braille):
 					pinInList.append(word)
 				try:
 					if len(pinIn) <=1 or j==len(pinIn)-1:
-						word=brailleToPinInToText.GlobalPlugin.getSingleWord().get(pinIn[j])
+						word=SingleWord.get(pinIn[j])
 						pinInList.append(word)
 						word=""
 					elif pinIn[j+1] is None or type(pinIn[j+1])==int:
-						word=brailleToPinInToText.GlobalPlugin.getSingleWord().get(pinIn[j])
+						word=SingleWord.get(pinIn[j])
 						pinInList.append(word)
 						word=""
 					elif pinIn[j-1] is None or j==0:
 						if pinIn[j+1].islower():
 							word=pinIn[j]
 						else:
-							word=brailleToPinInToText.GlobalPlugin.getSingleWord().get(pinIn[j])
+							word=SingleWord.get(pinIn[j])
 							pinInList.append(word)
 							word=""
 					else:
@@ -75,32 +81,17 @@ def brailleToText(braille):
 				pl.append(p[0].lower()+"un")
 				continue
 			if p[-1] in "1234":
-				pl.append(s(p[0:-1].lower()))
+				pl.append(simplify_pinyin(p[0:-1].lower()))
 			else:
-				pl.append(s(p.lower()))
+				pl.append(simplify_pinyin(p.lower()))
 		print("pl",pl)
 		result = viterbi(hmm_params=hmmparams, observations=pl, path_num = 1)
 		for i in result:
 			resultText="".join(i.path)
 	else:
-		pinInToTextDict=brailleToPinInToText.GlobalPlugin.getTextDict()
 		resultText=""
 		for k in range(0,len(pinInList)):
-			temp=pinInToTextDict.get(pinInList[k].lower()) if pinInList[k] !=None else None
+			temp=TextDict.get(pinInList[k].lower()) if pinInList[k] !=None else None
 			if temp is not None: resultText=resultText+str(temp)
-		print("result:",resultText)
-	api.copyToClip(resultText)
-	ui.message(resultText)
+	return resultText
 
-
-class GlobalPlugin(globalPluginHandler.GlobalPlugin):
-	scriptCategory = globalCommands.SCRCAT_BRAILLE
-
-	@script(
-		description=_("盲文转汉字"),
-		gesture="kb:NVDA+x"
-	)
-	def script_TransBraille(self, gesture):
-		focusObj = api.getFocusObject()
-		value = focusObj.value
-		brailleToText(value)

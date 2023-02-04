@@ -9,6 +9,8 @@ import globalCommands
 import globalVars
 import speechDictHandler
 import ui
+import api
+from . import brailleTranslator
 
 dictFile = os.path.join(os.path.dirname(os.path.abspath(__file__)), "brailleDic.dic")
 speechDict = speechDictHandler.SpeechDict()
@@ -26,6 +28,17 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		transOff()
 		global speechDict
 		speechDict = None
+
+
+	@scriptHandler.script(
+	description=_("盲文转汉字"),
+	gesture="kb:NVDA+x"
+	)
+	def script_TransBraille(self, gesture):
+		focusObj = api.getFocusObject()
+		value = focusObj.value
+		result = brailleTranslator.brailleToText(value)
+		ui.message(result)
 
 
 	@scriptHandler.script(

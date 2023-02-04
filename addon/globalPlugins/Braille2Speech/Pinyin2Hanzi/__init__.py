@@ -8,4 +8,3 @@ from .util import is_chinese, remove_tone, normlize_pinyin, simplify_pinyin, is_
 
 from .dag import dag
 from .viterbi import viterbi
-
